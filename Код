@@ -1,0 +1,36 @@
+#include "TM1637.h"
+#include "math.h"
+//int8_t DispMSG[] = {1, 2, 3, 4};
+#define CLK 2
+#define DIO 3
+TM1637 tm1637(CLK, DIO);
+int sensePin = A0;
+int a = 0;
+int a1 = 0;
+int a2 = 0;
+int a3 = 0;
+int a4 = 0;
+ 
+void setup() {
+  tm1637.init();
+  tm1637.set(BRIGHT_TYPICAL);
+  Serial.begin(9600);
+}
+ 
+void loop() {
+
+  for (int i=0; i <= 50; i++){
+    a += analogRead(sensePin);
+    delay(10);
+  }
+  a = ((a / 50) - 532) * 10 / 11;
+  a2 = ceil(a / 100);
+  a4 = a % 10;
+  a3 = (a - (a2 * 100) - a4) / 10;
+ // Serial.println(analogRead(sensePin));
+  Serial.println(a);
+  int8_t DispMSG[] = {a1, a2, a3, a4};
+  delay(500);
+  tm1637.point(false);
+  tm1637.display(DispMSG);
+}
